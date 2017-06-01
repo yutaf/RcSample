@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.yuta.rcsample">
 
+    <!-- Add permission -->
     <uses-permission android:name="android.permission.READ_SMS" />
 
     <application
@@ -24,6 +25,7 @@
                 <data android:scheme="yourAppScheme" android:host="ringcaptcha" />
             </intent-filter>
         </activity>
+        <!-- Declare the class handling received SMS which extends BroadcastReceiver -->
         <receiver
             android:name="com.example.yuta.rcsample.ReceiveSMS"
             android:enabled="true"

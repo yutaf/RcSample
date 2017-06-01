@@ -10,6 +10,7 @@ import android.util.Log;
 public class ReceiveSMS extends BroadcastReceiver {
     private static final String TAG = "ReceiveSMS";
 
+    // This method is called when the device receives SMS
     @Override
     public void onReceive(Context context, Intent intent) {
         Log.i(TAG, "handling message");

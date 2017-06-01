@@ -24,6 +24,7 @@ public class MainActivity extends AppCompatActivity {
 
     private int MY_PERMISSIONS_REQUEST_READ_SMS = 0x01;
 
+    // Callback after user taps the prompt asking permission
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            String permissions[], int[] grantResults) {
