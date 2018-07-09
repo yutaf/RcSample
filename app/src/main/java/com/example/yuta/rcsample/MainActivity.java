@@ -23,6 +23,17 @@ import com.thrivecom.ringcaptcha.lib.models.RingcaptchaResponse;
 public class MainActivity extends AppCompatActivity {
 
     private int MY_PERMISSIONS_REQUEST_READ_SMS = 0x01;
+    private String APP_KEY = "tyda7yly5u4icypi5u3u";
+    private String SECRET_KEY = "9u7i4o6ehivenihocugo";
+    // Retry in 180 seconds
+//    private String APP_KEY = "8o1e7i6avubo5y8e6i9u";
+//    private String SECRET_KEY = "reqy4uqytujy2iqyna4a";
+    // Retry in 15 seconds
+//    private String APP_KEY = "e8efe1o4i6eso5i8osy4";
+//    private String SECRET_KEY = "a4iruhyvibuvo6ehu8az";
+
+    private String API_KEY = "d32bec2373cebdd3894e92c316948f3ded8b8aef";
+    private String PHONE = "+817031905898";
 
     // Callback after user taps the prompt asking permission
     @Override
@@ -42,7 +53,10 @@ public class MainActivity extends AppCompatActivity {
             // permission denied, boo! Disable the
             // functionality that depends on this permission.
         }
-        this.sendCode();
+//        this.sendCode();
+//        this.verifyCode();
+        this.launchVerificationWidget();
+//        this.launchOnboardingWidget();
     }
 
     @Override
@@ -56,18 +70,65 @@ public class MainActivity extends AppCompatActivity {
         if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.READ_SMS}, MY_PERMISSIONS_REQUEST_READ_SMS);
         } else {
-            this.sendCode();
+//            this.sendCode();
+//            this.verifyCode();
+            this.launchVerificationWidget();
+//            this.launchOnboardingWidget();
         }
     }
 
-    private void sendCode() {
-        String app_key = "YOURAPPKEY";
-        String api_key = "YOURAPIKEY";
+    private void launchVerificationWidget() {
+        RingcaptchaApplication.verifyPhoneNumber(getApplicationContext(),APP_KEY, SECRET_KEY, new RingcaptchaApplicationHandler() {
+            @Override
+            public void onSuccess(RingcaptchaVerification ringcaptchaVerification) {
+                //Verification successful
+            }
+            @Override
+            public void onCancel() {
+                //Decide what do do if user cancelled operation
+            }
+        });
+    }
 
-        RingcaptchaAPIController controller = new RingcaptchaAPIController(app_key);
-        Context context = getApplicationContext();
-        String phone = "PHONENUMBER";
-        controller.sendCaptchaCodeToNumber(context, phone, RingcaptchaService.SMS, new RingcaptchaHandler() {
+    private void launchOnboardingWidget() {
+        RingcaptchaApplication.onboard(getApplicationContext(),"1e1y4u5idu9e6e6utyhi", "dylo6u8uvero9efi7i8o", new RingcaptchaApplicationHandler() {
+            @Override
+            public void onSuccess(RingcaptchaVerification ringcaptchaVerification) {
+                //Verification successful
+                Log.i("test", "Success");
+            }
+            @Override
+            public void onCancel() {
+                //Decide what do do if user cancelled operation
+                Log.i("test", "Canceled");
+            }
+        });
+    }
+
+    private void verifyCode() {
+        RingcaptchaAPIController controller = new RingcaptchaAPIController(APP_KEY);
+        String pin = "2427";
+        controller.verifyCaptchaWithCode(getApplicationContext(), pin, new RingcaptchaHandler() {
+
+            //Called when the response is successful
+            @Override
+            public void onSuccess(RingcaptchaResponse ringcaptchaResponse) {
+                //Clear SMS handler to avoid multiple verification attempts
+                RingcaptchaAPIController.setSMSHandler(null);
+            }
+
+            //Called when the response is unsuccessful
+            @Override
+            public void onError(Exception e) {
+                //Display an error to the user
+                Log.i("test", e.getMessage());
+            }
+        },API_KEY);
+    }
+
+    private void sendCode() {
+        RingcaptchaAPIController controller = new RingcaptchaAPIController(APP_KEY);
+        controller.sendCaptchaCodeToNumber(getApplicationContext(), PHONE, RingcaptchaService.SMS, new RingcaptchaHandler() {
             @Override
             public void onSuccess(RingcaptchaResponse o) {
                 RingcaptchaAPIController.setSMSHandler(new RingcaptchaSMSHandler() {
@@ -83,6 +144,6 @@ public class MainActivity extends AppCompatActivity {
                 // Display an error to the user
                 Log.i("test", e.getMessage());
             }
-        }, api_key);
+        }, API_KEY);
     }
 }
